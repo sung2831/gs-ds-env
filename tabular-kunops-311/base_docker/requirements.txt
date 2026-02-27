@@ -133,10 +133,10 @@ sagemaker==2.257.0
 sagemaker-core==1.0.77
 sagemaker-experiments==0.1.45
 sagemaker-mlflow==0.2.0
-sagemaker-mlops==1.4.1
+# sagemaker-mlops==1.4.1  # sagemaker-core>=2.4.1 요구로 sagemaker 2.257.0과 충돌
 sagemaker-schema-inference-artifacts==0.0.5
-sagemaker-serve==1.4.1
-sagemaker-train==1.4.1
+# sagemaker-serve==1.4.1  # sagemaker-core>=2.4.1 요구로 동일 충돌
+# sagemaker-train==1.4.1  # sagemaker-core>=2.4.1 요구로 동일 충돌
 sagemaker_pyspark==1.4.5
 schema==0.7.8
 scikit-learn==1.7.2
