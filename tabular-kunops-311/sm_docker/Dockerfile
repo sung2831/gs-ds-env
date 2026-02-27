@@ -1,5 +1,6 @@
 # Dockerfile
-FROM 155954279556.dkr.ecr.us-east-1.amazonaws.com/gs-automl-base-containers/lightgbm311:1.0
+FROM 155954279556.dkr.ecr.us-east-1.amazonaws.com/gs-automl-base-containers/tabular-kunops-311:1.0
+# FROM 155954279556.dkr.ecr.us-east-1.amazonaws.com/gs-automl-base-containers/lightgbm311:1.0
 
 ENV PIP_NO_CACHE_DIR=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -28,7 +29,7 @@ RUN pip install --no-cache-dir --no-deps --only-binary :all: -r /opt/ml/requirem
 
 # ipykernel을 설치하고 커널 등록
 RUN pip install ipykernel && \
-    python -m ipykernel install --user --name conda_lightgbm311 --display-name "conda_lightgbm311"
+    python -m ipykernel install --user --name conda_tabular-kunops-311 --display-name "conda_tabular-kunops-311"
 
 
 # 기본 명령어 설정
