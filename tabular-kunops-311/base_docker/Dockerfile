@@ -47,7 +47,8 @@ RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSIO
     make && make install && \
     cd .. && rm -rf Python-$PYTHON_VERSION* && \
     ln -s /usr/local/bin/pip3 /usr/bin/pip && \
-    ln -s /usr/local/bin/python3 /usr/bin/python
+    ln -s /usr/local/bin/python3 /usr/bin/python && \
+    rm -rf /root/.cache
 
 # Install fonts
 RUN apt-get update && \
@@ -69,11 +70,13 @@ RUN ${PIP} --no-cache-dir install --upgrade pip && \
 WORKDIR /
 COPY requirements.txt /requirements.txt
 
-# RUN ${PIP} install --no-deps -r /requirements.txt && rm /requirements.txt
-RUN ${PIP} install --no-deps --only-binary :all: -r /requirements.txt \
-    || ${PIP} install --no-deps --prefer-binary -r /requirements.txt \
-    || ${PIP} install --no-deps -r /requirements.txt  \
-    || ${PIP} install -U -r /requirements.txt 
+# --no-cache-dir로 pip 캐시 비활성화하여 디스크 절약
+# fallback 사이 캐시 정리로 "No space left on device" 방지
+RUN ${PIP} install --no-cache-dir --no-deps --only-binary :all: -r /requirements.txt \
+    || (rm -rf /tmp/pip-* ~/.cache/pip && ${PIP} install --no-cache-dir --no-deps --prefer-binary -r /requirements.txt) \
+    || (rm -rf /tmp/pip-* ~/.cache/pip && ${PIP} install --no-cache-dir --no-deps -r /requirements.txt) \
+    || (rm -rf /tmp/pip-* ~/.cache/pip && ${PIP} install --no-cache-dir -r /requirements.txt) \
+    && rm -f /requirements.txt
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
