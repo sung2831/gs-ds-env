@@ -22,18 +22,19 @@ sudo yum install -y htop tree telnet
 ##################################################
 # # alias
 echo "alias l='ls -al'" >> ~/.bashrc
-echo "alias st='conda activate streamlit314'" >> ~/.bashrc
-echo "alias 312='conda activate tabular312'" >> ~/.bashrc
-echo "alias 311='conda activate tabular-kunops-311'" >> ~/.bashrc
+echo "alias bp3='conda activate boilerplate311'" >> ~/.bashrc
+# echo "alias st='conda activate streamlit314'" >> ~/.bashrc
+# echo "alias 312='conda activate tabular312'" >> ~/.bashrc
+# echo "alias 311='conda activate tabular-kunops-311'" >> ~/.bashrc
 # echo "alias 312='conda activate tabular312_langchain'" >> ~/.bashrc
 # source ~/.bashrc
 
 # # python kernel
 cd ~/SageMaker/gs-ds-env/bin/
 ./increase_swap_size.sh
-./start_env.sh streamlit314
-./start_env.sh tabular312
-./start_env.sh tabular-kunops-311
+./start_env.sh boilerplate311
+# ./start_env.sh tabular312
+# ./start_env.sh tabular-kunops-311
 # clear
 
 # # streamlit run
