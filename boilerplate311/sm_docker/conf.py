@@ -5,8 +5,8 @@ import boto3
 import os
 
 
-log_table_name = "tabular-kunops-311-logs"
-kernel_name = "conda_tabular-kunops-311"
+log_table_name = "boilerplate311-logs"
+kernel_name = "conda_boilerplate311"
 
 
 def get_info():
