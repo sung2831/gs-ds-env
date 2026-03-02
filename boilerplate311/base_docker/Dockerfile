@@ -16,7 +16,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://ftp.kaist.ac.kr/ubuntu/|g' /etc/apt/sources.list \
         && apt-get update -o Acquire::ForceIPv4=true \
         && apt-get install -y --no-install-recommends \
-        software-properties-common \
         build-essential \
         ca-certificates \
         curl \
@@ -28,6 +27,7 @@ RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://ftp.kaist.ac.kr/ubuntu/|g
         vim \
         libffi-dev \
         libssl-dev \
+        libkrb5-dev \
         sqlite3 \
         libsqlite3-dev \
         libreadline-dev \
@@ -37,7 +37,6 @@ RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://ftp.kaist.ac.kr/ubuntu/|g
         libc6-dev \
         libbz2-dev \
         zlib1g-dev && \
-    add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.11.11 from source (PGO + LTO 최적화)
