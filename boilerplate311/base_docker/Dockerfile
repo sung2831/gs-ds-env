@@ -69,9 +69,10 @@ RUN pip install --no-cache-dir --upgrade pip setuptools && \
 WORKDIR /
 COPY requirements.txt /requirements.txt
 
-# uv pip install: 빠른 resolver + 병렬 다운로드
-# --no-cache: 디스크 절약, --python: 시스템 Python 명시 지정
-RUN uv pip install --no-cache --system --python python3 -r /requirements.txt \
+# uv pip install: 빠른 병렬 다운로드 + 설치
+# --no-deps: pip freeze 출력물이므로 dependency resolution 스킵 (패키지 간 버전 충돌 회피)
+# --no-cache: 디스크 절약
+RUN uv pip install --no-cache --no-deps --system --python python3 -r /requirements.txt \
     && rm -f /requirements.txt
 
 # Set environment variables
