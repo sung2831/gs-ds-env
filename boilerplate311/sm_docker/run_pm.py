@@ -36,6 +36,8 @@ def parse_args():
     # --- S3 설정 ---
     parser.add_argument('--s3_bucket', type=str, default='retail-mlops-edu-2026')
     parser.add_argument('--s3_user', type=str, default='kunops')
+    parser.add_argument('--s3_notebook', type=str, default='',
+                        help='실행할 노트북의 S3 URI (예: s3://bucket/path/notebook.ipynb)')
     parser.add_argument('--s3_input_prefix', type=str, default='',
                         help='S3 input prefix (default: edu-2w/{s3_user}/input)')
     parser.add_argument('--s3_output_prefix', type=str, default='',
@@ -98,6 +100,24 @@ def setup_sm_directories():
 # ----------------------------
 # S3 I/O Functions
 # ----------------------------
+def download_s3_notebook(s3_uri):
+    """S3에서 노트북 파일을 다운로드하여 SM_CODE_DIR에 저장"""
+    # s3://bucket/prefix/notebook.ipynb → bucket, key 파싱
+    s3_path = s3_uri.replace("s3://", "")
+    bucket = s3_path.split("/", 1)[0]
+    key = s3_path.split("/", 1)[1]
+    filename = os.path.basename(key)
+
+    os.makedirs(SM_CODE_DIR, exist_ok=True)
+    local_path = os.path.join(SM_CODE_DIR, filename)
+
+    print(f"  📥 {s3_uri} → {local_path}")
+    s3 = boto3.client("s3")
+    s3.download_file(bucket, key, local_path)
+    print(f"  ✅ Downloaded: {filename}")
+    return filename
+
+
 def download_s3_input(bucket, s3_input_prefix):
     """S3에서 입력 데이터를 로컬 SageMaker 디렉토리로 다운로드"""
     print(f"  📥 s3://{bucket}/{s3_input_prefix}/ → {SM_CHANNEL_TRAIN}/")
@@ -191,14 +211,19 @@ if __name__ == "__main__":
         print("=" * 50)
         download_s3_input(args.s3_bucket, args.s3_input_prefix)
 
-        # 3. Papermill 노트북 실행
+        # 3. 노트북 준비 + 실행
         print("\n" + "=" * 50)
         print("🚀 [3/4] Running Papermill")
         print("=" * 50)
-        input_nb = 'train_titanic_lightgbm.ipynb'
+
+        # S3 노트북 지정 시 다운로드, 아니면 로컬 기본 노트북 사용
+        if args.s3_notebook:
+            input_nb = download_s3_notebook(args.s3_notebook)
+        else:
+            input_nb = 'train_titanic_lightgbm.ipynb'
 
         # S3 설정 키를 제외한 hyperparameters만 papermill로 전달
-        s3_keys = {'s3_bucket', 's3_user', 's3_input_prefix', 's3_output_prefix'}
+        s3_keys = {'s3_bucket', 's3_user', 's3_notebook', 's3_input_prefix', 's3_output_prefix'}
         params = {k: v for k, v in vars(args).items() if v and k not in s3_keys}
         # 노트북에서 사용하는 S3 변수명으로 전달
         params['S3_BUCKET'] = args.s3_bucket

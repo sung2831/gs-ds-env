@@ -1,0 +1,51 @@
+# Base Image (Python 3.11 공식 slim 이미지, Debian Bookworm 기반)
+FROM python:3.11-slim
+
+LABEL maintainer="Amazon AI"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# C 확장 빌드 및 런타임에 필요한 최소 패키지만 설치
+RUN apt-get update \
+        && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        curl \
+        wget \
+        git \
+        libopencv-dev \
+        openssh-client \
+        openssh-server \
+        vim \
+        libkrb5-dev \
+        graphviz \
+        fontconfig && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install fonts (나눔고딕)
+RUN wget -q https://hangeul.pstatic.net/hangeul_static/webfont/NanumGothic/NanumGothic.ttf && \
+    mkdir -p /usr/share/fonts/nanum/ && \
+    mv NanumGothic.ttf /usr/share/fonts/nanum/ && \
+    fc-cache -fv
+
+# uv 설치 (pip 대비 10~100x 빠른 패키지 설치)
+RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir uv
+
+# Copy and install dependencies
+WORKDIR /
+COPY requirements.txt /requirements.txt
+
+# uv pip install: 빠른 병렬 다운로드 + 설치
+# --no-deps: pip freeze 출력물이므로 dependency resolution 스킵 (패키지 간 버전 충돌 회피)
+# --no-cache: 디스크 절약
+RUN uv pip install --no-cache --no-deps --system --python python3 -r /requirements.txt \
+    && rm -f /requirements.txt
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib:/var/lang/lib:/lib64:/usr/lib64:/var/runtime:/var/runtime/lib:/var/task:/var/task/lib:/opt/lib" \
+    PYTHONIOENCODING=UTF-8 \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
