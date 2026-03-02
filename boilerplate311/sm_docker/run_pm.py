@@ -222,9 +222,13 @@ if __name__ == "__main__":
         else:
             input_nb = 'train_titanic_lightgbm.ipynb'
 
-        # S3 설정 키를 제외한 hyperparameters만 papermill로 전달
-        s3_keys = {'s3_bucket', 's3_user', 's3_notebook', 's3_input_prefix', 's3_output_prefix'}
-        params = {k: v for k, v in vars(args).items() if v and k not in s3_keys}
+        # S3 설정 키 + 관리용 키를 제외한 hyperparameters만 papermill로 전달
+        exclude_keys = {
+            's3_bucket', 's3_user', 's3_notebook', 's3_input_prefix', 's3_output_prefix',
+            'project_hashkey', 'experiment_hashkey', 'table_name',
+            'dataset_table_name', 'username', 'job_type', 'task_token',
+        }
+        params = {k: v for k, v in vars(args).items() if v and k not in exclude_keys}
         # 노트북에서 사용하는 S3 변수명으로 전달
         params['S3_BUCKET'] = args.s3_bucket
         params['S3_USER'] = args.s3_user
