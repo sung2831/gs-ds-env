@@ -5,8 +5,9 @@ import boto3
 import os
 
 
-log_table_name = "boilerplate311-logs"
-kernel_name = "conda_boilerplate311"
+env_name = os.environ.get("ENV_NAME", "boilerplate311")
+log_table_name = f"{env_name}-logs"
+kernel_name = f"conda_{env_name}"
 
 
 def get_info():

@@ -2,6 +2,9 @@
 FROM {{account_id}}.dkr.ecr.{{region_name}}.amazonaws.com/gs-automl-base-containers/{{env_name}}:{{version}}
 # FROM 155954279556.dkr.ecr.us-east-1.amazonaws.com/gs-automl-base-containers/lightgbm311:1.0
 
+ARG ENV_NAME={{env_name}}
+ENV ENV_NAME=${ENV_NAME}
+
 ENV PIP_NO_CACHE_DIR=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PIP_DEFAULT_TIMEOUT=100
