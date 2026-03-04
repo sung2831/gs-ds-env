@@ -36,7 +36,7 @@ REPO_NAME="gs-automl-base-containers/$ENV_NAME"
 
 cd "../$ENV_NAME/base_docker"
 
-TMPDIR=/home/ec2-user/SageMaker/docker-tmp docker build -f Dockerfile -t $REPO_NAME .
+TMPDIR=/home/ec2-user/SageMaker/docker-tmp docker build -f Dockerfile.slim -t $REPO_NAME .
 
 docker tag $REPO_NAME $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPO_NAME:$VERSION
 
